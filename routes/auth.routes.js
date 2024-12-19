@@ -1,5 +1,5 @@
 const { Login, createUser } = require("../controllers/AuthController");
-const { userVerification, authenticateToken, authorizeRole } = require("../middleware/AuthMiddleware");
+const { authenticateToken, authorizeRole } = require("../middleware/AuthMiddleware");
 const router = require("express").Router();
 const { body, validationResult } = require("express-validator");
 
@@ -13,18 +13,18 @@ router.post(
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ status: 'error', errors: errors.array() });
     }
     next();
   },
-  Login // Directly using the destructured Login function here
+  Login // Login handler
 );
 
 // Create User Route
 router.post(
   '/create-user',
-  authenticateToken,
-  authorizeRole(['Admin']),
+  authenticateToken,  // Authenticate the token
+  authorizeRole(['Admin']),  // Ensure the user is an admin
   [
     body('username').notEmpty().withMessage('Username is required'),
     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
@@ -33,11 +33,11 @@ router.post(
   (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({ status: 'error', errors: errors.array() });
     }
     next();
   },
-  createUser // Directly using the destructured createUser function here
+  createUser // User creation handler
 );
 
 module.exports = router;

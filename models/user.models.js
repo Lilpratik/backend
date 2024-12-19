@@ -2,6 +2,10 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");  // For password hashing
 
 const userSchema = new mongoose.Schema({
+  id: {
+    type: mongoose.Schema.Types.ObjectId,
+    auto: true,
+  },
   username: {
     type: String,
     required: [true, "Your username is required"],
@@ -15,12 +19,16 @@ const userSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    enum: ["Admin", "Supervisor", "Event Manager", "Client"], // Roles can be limited to this
+    enum: ["Admin", "Supervisor", "Event-Manager", "Client"], // Roles can be limited to this
     required: [true, "Your role is required"],
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Admin", // Reference to the user who created this account
+  },
+  expiry: {
+    type: Date,
+    required: true,
   },
   // createdAt: {
   //   type: Date,

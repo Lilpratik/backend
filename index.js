@@ -3,8 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const app = express();
-const authRoutes = require('./routes/AuthRoute');
-const User = require('./models/UserModel');
+const authRoutes = require('./routes/auth.routes');
+const User = require('./models/user.models');
 const eventRoutes = require('./routes/EventRoute');
 const taskRoutes = require('./routes/TaskRoute');
 require('dotenv').config();
@@ -12,14 +12,14 @@ require('dotenv').config();
 const { MONGO_URL, PORT, ADMIN_PASSWORD } = process.env;
 
 // Middleware to handle CORS and JSON parsing
-app.use(
-  cors({
-    origin: ["http://localhost:5000"],  // Allowing requests from this origin
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
-    credentials: true,  // Enabling credentials
-  })
-);
-
+// app.use(
+//   cors({
+//     origin: ["http://localhost:5000"],  // Allowing requests from this origin
+//     methods: ["GET", "POST", "PUT", "DELETE"], // Allowed methods
+//     credentials: true,  // Enabling credentials
+//   })
+// );
+app.use(cors());
 app.use(express.json()); // Middleware to parse JSON requests
 
 // MongoDB connection

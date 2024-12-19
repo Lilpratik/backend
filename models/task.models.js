@@ -1,34 +1,32 @@
 const mongoose = require('mongoose');
 
 const taskSchema = new mongoose.Schema({
-  taskName: {
+  id: {
+    type: mongoose.Schema.Types.ObjectId,
+    auto: true,
+  },
+  task_name: {
     type: String,
     required: true, // Task Name is required
     trim: true, // Removes extra spaces
   },
   description: {
     type: String,
-    required: true, // Task description is required
+    required: false, // Task description is optional
     trim: true, // Removes extra spaces
   },
   status: {
     type: String,
-    enum: ["Not Started", "In Progress", "Completed"], // Status can only be one of these values
-    default: "Not Started", // Default status is "Pending"
-    required: true, // Status is required
+    enum: ["Pending", "In-Progress", "Completed"], // Status can only be one of these values
+    default: "Pending", // Default status is "Pending"
   },
-  dueDate: {
+  due_date: {
     type: Date,
     required: true, // Due Date is required
   },
-  assignedTo: {
+  linked_event: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User", // Reference to the user model (the user assigned to this task)
-    required: true,
-  },
-  event: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Event", // Reference to the event model (the event this task is associated with)
+    ref: "Event",
     required: true,
   },
   priority: {
@@ -44,10 +42,15 @@ const taskSchema = new mongoose.Schema({
 }, {timestamps: true}); // Automatically adds createdAt and updatedAt fields
 
 // Indexing for performance improvement
-taskSchema.index({ assignedTo: 1, event: 1 });
+taskSchema.index({ linked_event: 1 });
 taskSchema.index({ status: 1 }); // Added index for status field to improve filtering performance
 
-// Creating the task model
+// Optional: Ensure the due date is always in the future
+taskSchema.path('due_date').validate(function(value) {
+  return value > Date.now(); // Ensures due_date is in the future
+}, 'Due date must be a future date');
+
+// Creating the Task model
 const Task = mongoose.model("Task", taskSchema);
 
 // Exporting the Task model
